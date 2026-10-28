@@ -1,0 +1,42 @@
+MUNDO EN3D - CONFIGURAR FIREBASE (una sola vez)   Proyecto: en-3d-c2079
+=======================================================================
+
+LAS DOS PAGINAS
+  index.html  -> la pagina de los clientes (no tiene nada de administrador)
+  admin.html  -> tu pagina: tiene un boton chico "Admin" arriba a la izquierda.
+                 Lo tocas, entras con tu mail y contrasena, y despues cargas y
+                 borras fotos desde "Nuestros trabajos".
+  Tu link de admin es: https://TUUSUARIO.github.io/TU-REPO/admin.html
+  (no se lo pases a los clientes)
+
+1) AUTHENTICATION
+   Firebase Console > Authentication > Comenzar > Metodo de acceso
+   > Correo electronico/contrasena > Habilitar > Guardar.
+   Pestana "Usuarios" > Agregar usuario: tu mail y una contrasena.
+   Recomendado: Configuracion > Acciones del usuario > desactivar
+   "Habilitar creacion (registro)".
+
+2) FIRESTORE
+   Firestore Database > Crear base de datos > modo produccion >
+   ubicacion (ej. southamerica-east1) > Habilitar.
+
+3) REGLAS  (Firestore Database > pestana "Reglas" > borrar todo, pegar esto,
+   cambiar TU_MAIL@gmail.com por tu mail en minusculas -2 veces- > Publicar)
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /photos/{foto} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.token.email == 'TU_MAIL@gmail.com'
+                    && request.resource.data.data.size() < 900000;
+      allow delete: if request.auth != null
+                    && request.auth.token.email == 'TU_MAIL@gmail.com';
+    }
+  }
+}
+
+4) DOMINIO
+   Authentication > Configuracion > Dominios autorizados:
+   agregar tuusuario.github.io
